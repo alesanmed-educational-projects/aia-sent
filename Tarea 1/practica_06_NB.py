@@ -204,6 +204,37 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         ignorar el ejemplo).
         """
 
+        if not autoajuste:
+
+            self.genera_probabilidades(entr, clas_entr)
+            print("Entrenado con k=" + str(self.k))
+
+        else:
+
+            ks = [0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 20, 50, 100]
+            performance_reviews = []
+            for k in ks:
+                self.k = k
+                self.genera_probabilidades(entr, clas_entr)
+                print("Entrenado con k=" + str(self.k))
+                performance = self.test(valid, clas_valid)
+                performance_reviews.append(performance)
+                print("Aciertos: " + str(performance))
+
+            self.k = ks[np.argmax(performance_reviews)]
+            print("Fixed to k=" + str(self.k))
+            self.genera_probabilidades(entr, clas_entr)
+
+
+    def genera_probabilidades(self, entr, clas_entr):
+        """
+        Entrena el clasificador de Naive Bayes para un conjunto de entrenamiento determinado.
+        Tiene en cuenta el suavizado aditivo de Laplace, mediante un k prefijado.
+
+        Se guarda un diccionario tridimensional para:
+            > Atributos > Clasificaciones posibles > Valores posibles del atributo: Probabilidad P(ai=|Vj)
+            > Clases: Probabilidad P(Vj)
+        """
         self.probabilidades = {}
         N = len(clas_entr)
         for clase in self.clases:
@@ -235,6 +266,7 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         for clase in self.clases:
             self.probabilidades[clase] /= N
 
+
     def clasifica(self,ejemplo):
 
         """ 
@@ -256,13 +288,44 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         res = np.empty(len(self.clases))
         
         for clase_num in range(len(self.clases)):
-            p_clase = math.log(self.probabilidades[self.clases[clase_num]])
+            clase = self.clases[clase_num]
+            p_clase = math.log(self.probabilidades[clase])
+
             suma = p_clase
+
             for atributo_num in range(len(self.atributos)):
-                suma += math.log(self.probabilidades[self.atributos[atributo_num]][self.clases[clase_num]][ejemplo[atributo_num]])
+                atributo = self.atributos[atributo_num]
+                valor = ejemplo[atributo_num]
+
+                if valor not in self.valores_atributos[atributo]:
+                    continue
+
+                p_atributo = self.probabilidades[atributo][clase][valor]
+                suma += math.log(p_atributo)
+
             res[clase_num] = suma
         
         return self.clases[np.argmax(res)]
 
+    def test(self, valid, clas_valid):
+        """
+        Método para la prueba del clasificador Naive
+        Bayes obtenido previamente mediante el entrenamiento.
+
+        Tambien se usa para ajustar el valor de suavizado k durante
+        el entrenamiento.
+
+        Si se llama a este método sin haber entrenado previamente el
+        clasificador, debe devolver una excepción ClasificadorNoEntrenado
+
+        Devuelve el porcentaje de aciertos con respecto a las clasificaciones
+        reales del conjunto de pruebas
+        """
+        cont = 0
+        for i in range(len(valid)):
+            valor = valid[i]
+            clasificacion = clas_valid[i]
+            cont += int(self.clasifica(valor)==clasificacion)
+        return cont/len(valid)
+
 # ---------------------------------------------------------------------------
-        
