@@ -1,3 +1,6 @@
+#-*-coding:utf-8-*-
+
+
 # MII-AIA 2015-16
 # Práctica del tema 6 - Parte 0 
 # =============================
@@ -86,6 +89,9 @@
 
 # NO MODIFICAR ESTA CLASE.
 
+import numpy as np
+import math
+
 class MetodoClasificacion:
     """
     Clase base para métodos de clasificación
@@ -141,7 +147,7 @@ class MetodoClasificacion:
         """
         abstract
 
-# Excepción que a de devolverse si se llama al método de clasificación antes de
+# Excepción que ha de devolverse si se llama al método de clasificación antes de
 # ser entrenado  
         
 class ClasificadorNoEntrenado(Exception): pass
@@ -169,7 +175,8 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         tomará como "k" la que se decida en autoajuste).
         """
 
-        # *********** COMPLETA EL CÓDIGO **************
+        super(ClasificadorNaiveBayes, self).__init(atributo_clasificacion, clases, atributos, valores_atributos)
+        self.k = k
         
     def entrena(self,entr,clas_entr,valid,clas_valid,autoajuste=True):
 
@@ -230,7 +237,15 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         ignorar el ejemplo).
         """
 
-        # *********** COMPLETA EL CÓDIGO **************
+        res = np.empty(len(self.clases))
+        
+        for clase in self.clases:
+            p_clase = self.probabilidades[clase]
+            mult = p_clase
+            for atributo in self.atributos:
+                valores_posibles = self.valores_atributos[atributo]
+                for valor in valores_posibles:
+                    mult += 0 
 
 # ---------------------------------------------------------------------------
         
