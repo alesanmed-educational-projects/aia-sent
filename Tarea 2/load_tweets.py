@@ -16,5 +16,5 @@ with open('data/corpus.csv', 'r') as corpus:
                 if os.path.isfile('data/rawdata/{0}.json'.format(filename)):
                     with open('data/rawdata/{0}.json'.format(filename), 'r') as tweet_file:
                         tweet = json.load(tweet_file)
-                        tweets.write("{0}\n".format(repr(tweet['text'])))
-                        classification.write("{0}\n".format(row[1]))
+                        print(repr(tweet['text']), file=tweets)
+                        print(row[1], file=classification)
