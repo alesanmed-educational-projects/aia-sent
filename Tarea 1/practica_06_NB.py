@@ -249,16 +249,20 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         desconocidos. En ese caso, simplimente ignorar esos valores (pero no
         ignorar el ejemplo).
         """
-
+        
+        if self.probabilidades is None:
+            raise ClasificadorNoEntrenado
+        
         res = np.empty(len(self.clases))
         
-        for clase in self.clases:
-            p_clase = self.probabilidades[clase]
-            mult = p_clase
-            for atributo in self.atributos:
-                valores_posibles = self.valores_atributos[atributo]
-                for valor in valores_posibles:
-                    mult += 0 
+        for clase_num in range(len(self.clases)):
+            p_clase = math.log(self.probabilidades[self.clases[clase_num]])
+            suma = p_clase
+            for atributo_num in range(len(self.atributos)):
+                suma += math.log(self.probabilidades[self.atributos[atributo_num]][self.clases[clase_num]][ejemplo[atributo_num]])
+            res[clase_num] = suma
+        
+        return self.clases[np.argmax(res)]
 
 # ---------------------------------------------------------------------------
         
