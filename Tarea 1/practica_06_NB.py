@@ -197,8 +197,24 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         ignorar el ejemplo).
         """
 
-        # *********** COMPLETA EL CÓDIGO **************
-        
+        self.probabilidades = {}
+        N = len(clas_entr)
+        for clase in clases:
+            self.probabilidades[clase] = self.clas_entr.count(clase)/N
+
+        for atributo in atributos:
+            dict_clases = {}
+            for clase in clases:
+                dict_val_atributos = {}
+                for valor in valores_atributos[atributo]:
+                    dict_val_atributos[valor] = contar / self.probabilidades[clase]
+                dict_clases[clase] = dict_val_atributos 
+            self.probabilidades[atributos] = dict_clases
+
+    def contar(atributo, clase, valor):
+
+
+
     def clasifica(self,ejemplo):
 
         """ 
