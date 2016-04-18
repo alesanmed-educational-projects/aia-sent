@@ -10,6 +10,7 @@ from english_stemmer import EnglishTokenizer
 from sklearn.preprocessing import label_binarize
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
+from random import shuffle
                    
 def run(x_train, y_train, x_val, y_val, y_val_bin):
     modelo = Pipeline([('tfidf', TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 3))),
@@ -19,12 +20,13 @@ def run(x_train, y_train, x_val, y_val, y_val_bin):
     
     predicted = modelo.predict(x_val)
     
-    metrics = precision_recall_fscore_support(y_val, predicted, average='macro')
+    metrics = precision_recall_fscore_support(y_val, predicted, average='macro', pos_label=None)
     
     print("Exactitud:{0}\nPrecision:{1}\nRecall:{2}\nF1:{3}".format(accuracy_score(y_val, predicted), 
                                                                       metrics[0], metrics[1], metrics[2]))
     
     score = modelo.predict_proba(x_val)
+        
     print("AUC:{0}".format(roc_auc_score(y_val_bin, score)))
     
     precision = dict()
@@ -61,6 +63,8 @@ def run(x_train, y_train, x_val, y_val, y_val_bin):
     plt.show()
     
 if __name__ == "__main__":
+    subtask = int(input("Introduzca sub-tarea (1-4): "))
+    
     tweets = None
     classifications = None
     
@@ -70,11 +74,77 @@ if __name__ == "__main__":
     with open('data/classification.txt', 'r') as classifications_file:
         classifications = np.array(classifications_file.read().splitlines())
     
-    train_tweets = tweets[:2000]
-    train_classif = classifications[:2000]
+    index_shuf = list(range(len(tweets)))
+    shuffle(index_shuf)
+
+    tweets_shuf = [tweets[i] for i in index_shuf]
+    class_shuf = [classifications[i] for i in index_shuf]
     
-    val_tweets = tweets[2000:]
-    val_classif = classifications[2000:]
+    tweets = np.array(tweets_shuf)
+    classifications = np.array(class_shuf)
     
-    val_classif_bin = label_binarize(val_classif, ['positive', 'negative', 'neutral'])
-    run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin)
+    if subtask == 1:
+        train_tweets = tweets[:2000]
+        train_classif = classifications[:2000]
+        
+        val_tweets = tweets[2000:]
+        val_classif = classifications[2000:]
+        
+        val_classif_bin = label_binarize(val_classif, ['positive', 'negative', 'neutral'])
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin)
+    elif subtask == 2:
+        classifications[np.where(classifications == 'positive')[0]] = 's'
+        classifications[np.where(classifications == 'negative')[0]] = 's'
+        classifications[np.where(classifications == 'neutral')[0]] = 'ns'
+        
+        train_tweets = tweets[:2000]
+        train_classif = classifications[:2000]
+        
+        val_tweets = tweets[2000:]
+        val_classif = classifications[2000:]
+        
+        val_classif_bin = label_binarize(val_classif, ['s', 'ns'])
+
+        val_classif_bin_2 = np.empty((val_classif_bin.shape[0], 2))
+    
+        val_classif_bin_2[np.where(val_classif_bin == [0])[0]] = [1, 0]
+        val_classif_bin_2[np.where(val_classif_bin == [1])[0]] = [0, 1]
+    
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin_2)
+    elif subtask == 3:
+        classifications[np.where(classifications == 'negative')[0]] = 'np'
+        classifications[np.where(classifications == 'neutral')[0]] = 'np'
+        
+        train_tweets = tweets[:2000]
+        train_classif = classifications[:2000]
+        
+        val_tweets = tweets[2000:]
+        val_classif = classifications[2000:]
+        
+        val_classif_bin = label_binarize(val_classif, ['positive', 'np'])
+
+        val_classif_bin_2 = np.empty((val_classif_bin.shape[0], 2))
+    
+        val_classif_bin_2[np.where(val_classif_bin == [0])[0]] = [1, 0]
+        val_classif_bin_2[np.where(val_classif_bin == [1])[0]] = [0, 1]
+    
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin_2)
+    elif subtask == 4:
+        classifications[np.where(classifications == 'positive')[0]] = 'nn'
+        classifications[np.where(classifications == 'neutral')[0]] = 'nn'
+        
+        train_tweets = tweets[:2000]
+        train_classif = classifications[:2000]
+        
+        val_tweets = tweets[2000:]
+        val_classif = classifications[2000:]
+        
+        val_classif_bin = label_binarize(val_classif, ['negative', 'nn'])
+
+        val_classif_bin_2 = np.empty((val_classif_bin.shape[0], 2))
+    
+        val_classif_bin_2[np.where(val_classif_bin == [0])[0]] = [1, 0]
+        val_classif_bin_2[np.where(val_classif_bin == [1])[0]] = [0, 1]
+    
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin_2)
+
