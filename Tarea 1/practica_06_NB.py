@@ -175,7 +175,7 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
         tomará como "k" la que se decida en autoajuste).
         """
 
-        super(ClasificadorNaiveBayes, self).__init(atributo_clasificacion, clases, atributos, valores_atributos)
+        super(ClasificadorNaiveBayes, self).__init__(atributo_clasificacion, clases, atributos, valores_atributos)
         self.k = k
         
     def entrena(self,entr,clas_entr,valid,clas_valid,autoajuste=True):
@@ -206,21 +206,34 @@ class ClasificadorNaiveBayes(MetodoClasificacion):
 
         self.probabilidades = {}
         N = len(clas_entr)
-        for clase in clases:
-            self.probabilidades[clase] = self.clas_entr.count(clase)/N
+        for clase in self.clases:
+            # Ocurrencias de clases.
+            # NO ES PROBABILIDAD. LUEGO SE PASA.
+            self.probabilidades[clase] = clas_entr.count(clase)
 
-        for atributo in atributos:
+        clas_numpy = np.array(clas_entr)
+        entr_numpy = np.array(entr)
+
+        for atributo in self.atributos:
             dict_clases = {}
-            for clase in clases:
+            index_atributo = self.atributos.index(atributo)
+
+            for clase in self.clases:
                 dict_val_atributos = {}
-                for valor in valores_atributos[atributo]:
-                    dict_val_atributos[valor] = contar / self.probabilidades[clase]
+                indexes_muestras_clase = np.where(clas_numpy==clase)[0]
+                aux = entr_numpy[
+                        indexes_muestras_clase,
+                        index_atributo]
+
+                for valor in self.valores_atributos[atributo]:
+                    numerador = len(np.where(aux==valor)[0]) + self.k
+                    denominador = self.probabilidades[clase] + (self.k*len(self.valores_atributos[atributo]))
+                    dict_val_atributos[valor] = numerador / denominador
                 dict_clases[clase] = dict_val_atributos 
-            self.probabilidades[atributos] = dict_clases
+            self.probabilidades[atributo] = dict_clases
 
-    def contar(atributo, clase, valor):
-
-
+        for clase in self.clases:
+            self.probabilidades[clase] /= N
 
     def clasifica(self,ejemplo):
 
