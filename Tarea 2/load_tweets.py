@@ -3,7 +3,9 @@
 import csv
 import json
 import os
+
 from emoji_dict import emojis
+from abbreviations import abbreviations
 
 with open('data/corpus.csv', 'r') as corpus:
     reader = csv.reader(corpus, delimiter=',', quotechar='"')
@@ -25,6 +27,8 @@ with open('data/tweets.txt') as file_tweets:
     for line in file_tweets:
         for emoji, word in emojis.items():
             line = line.replace(emoji, word)
+        for abbreviation, meaning in abbreviations.items():
+            line = line.replace(abbreviation, meaning)
         tweets.append(line)
 
 with open('data/tweets.txt', 'w') as file_tweets:
