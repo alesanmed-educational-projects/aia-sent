@@ -4,7 +4,6 @@ import csv
 import json
 import os
 from emoji_dict import emojis
-import re
 
 with open('data/corpus.csv', 'r') as corpus:
     reader = csv.reader(corpus, delimiter=',', quotechar='"')
