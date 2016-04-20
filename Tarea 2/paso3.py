@@ -29,25 +29,29 @@ with open('data/tweets.txt', 'r') as tweets_file:
 with open('data/classification.txt', 'r') as classifications_file:
     classifications = np.array(classifications_file.read().splitlines())
 
-for score in scores:
-    print("# Tuning hyper-parameters for %s" % score)
-    print()
+# multiprocessing requires the fork to happen in a __main__ protected
+# block
 
-    grid_search = GridSearchCV(modelo, parameters, 
-    	cv=ShuffleSplit(tweets.size),
-    	scoring='%s_weighted' % score)
+# find the best parameters for both the feature extraction and the
+# classifier
+grid_search = GridSearchCV(modelo, parameters, n_jobs=-1, verbose=1,
+    cv=ShuffleSplit(tweets.size))
 
-    print("Performing grid search...")
-    print("pipeline:", [name for name, _ in modelo.steps])
-    print("parameters:")
-    pprint(parameters)
-    t0 = time()
-    #grid_search.fit(tweets, classification)
-    print("done in %0.3fs" % (time() - t0))
-    print()
+print("%d documents" % len(tweets))
+print()
 
-    print("Best score: %0.3f" % grid_search.best_score_)
-    print("Best parameters set:")
-    best_parameters = grid_search.best_estimator_.get_params()
-    for param_name in sorted(parameters.keys()):
-        print("\t%s: %r" % (param_name, best_parameters[param_name]))
+print("Performing grid search...")
+print("pipeline:", [name for name, _ in modelo.steps])
+print("parameters:")
+pprint(parameters)
+t0 = time()
+grid_search.fit(tweets, classifications)
+print("done in %0.3fs" % (time() - t0))
+print()
+
+print("Best score: %0.3f" % grid_search.best_score_)
+print("Best parameters set:")
+best_parameters = grid_search.best_estimator_.get_params()
+for param_name in sorted(parameters.keys()):
+    print("\t%s: %r" % (param_name, best_parameters[param_name]))
+
