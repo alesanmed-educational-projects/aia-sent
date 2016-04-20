@@ -1,4 +1,4 @@
-dictionary = {
+emojis = {
 	":‑)": "happy",
 	":)": "happy",
 	":D": "happy",

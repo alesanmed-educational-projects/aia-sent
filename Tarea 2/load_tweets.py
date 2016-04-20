@@ -3,7 +3,7 @@
 import csv
 import json
 import os
-from emoji_dict import dictionary
+from emoji_dict import emojis
 import re
 
 with open('data/corpus.csv', 'r') as corpus:
@@ -21,6 +21,13 @@ with open('data/corpus.csv', 'r') as corpus:
                         print(repr(tweet['text']), file=tweets)
                         print(row[1], file=classification)
                         
-with open('data/tweets.txt') as tweets:
-    for emoji, word in dictionary.items():
-        pass
+tweets = []
+with open('data/tweets.txt') as file_tweets:
+    for line in file_tweets:
+        for emoji, word in emojis.items():
+            line = line.replace(emoji, word)
+        tweets.append(line)
+
+with open('data/tweets.txt', 'w') as file_tweets:
+    for tweet in tweets:
+        file_tweets.write(tweet)
