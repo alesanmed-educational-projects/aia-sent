@@ -19,16 +19,16 @@ def run(x_train, y_train, x_val, y_val, y_val_bin, subtask):
     multinomibalnb = None
     
     if subtask == 1:
-        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 2), smooth_idf=False, sublinear_tf=True, use_idf=False)
-        multinomibalnb = MultinomialNB(alpha=0.3)
+        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 2), sublinear_tf=True)
+        multinomibalnb = MultinomialNB(alpha=0.5)
     elif subtask == 2:
-        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 2), smooth_idf=False, sublinear_tf=True, use_idf=False, binary=True)
+        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 3), use_idf=False)
         multinomibalnb = MultinomialNB(alpha=0.1)
     elif subtask == 3:
-        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 3), use_idf=False)
+        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 2), smooth_idf=False, use_idf=False)
         multinomibalnb = MultinomialNB(alpha=0.05)
     elif subtask == 4:
-        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 3), smooth_idf=False, sublinear_tf=True, use_idf=False)
+        tfidf = TfidfVectorizer(stop_words='english', tokenizer=EnglishTokenizer(), ngram_range=(1, 3), binary=True, smooth_idf=False, use_idf=False)
         multinomibalnb = MultinomialNB(alpha=0.05)
             
     
