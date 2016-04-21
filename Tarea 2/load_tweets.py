@@ -29,7 +29,7 @@ with open('data/tweets.txt') as file_tweets:
             line = line.replace(emoji, word)
         for abbreviation, meaning in abbreviations.items():
             line = line.replace(abbreviation, meaning)
-        tweets.append(line)
+        tweets.append(line.lower())
 
 with open('data/tweets.txt', 'w') as file_tweets:
     for tweet in tweets:

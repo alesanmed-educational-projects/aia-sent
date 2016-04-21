@@ -10,8 +10,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.cross_validation import ShuffleSplit
 from english_stemmer import EnglishTokenizer
 
-def run():
-    subtask = int(input("Introduzca sub-tarea (1-4): "))
+def run(subtask=-1):
+    if subtask == -1:
+        subtask = int(input("Introduzca sub-tarea (1-4): "))
 
     modelo = Pipeline([('tfidf', TfidfVectorizer()),
                    ('clf', MultinomialNB())])
@@ -110,7 +111,7 @@ def run():
     
     # find the best parameters for both the feature extraction and the
     # classifier
-    grid_search = GridSearchCV(modelo, parameters, n_jobs=4, verbose=1,
+    grid_search = GridSearchCV(modelo, parameters, n_jobs=4, verbose=0,
         cv=ShuffleSplit(tweets.size))
     
     print("%d documents" % len(tweets))
@@ -130,4 +131,6 @@ def run():
     best_parameters = grid_search.best_estimator_.get_params()
     for param_name in sorted(parameters.keys()):
         print("\t%s: %r" % (param_name, best_parameters[param_name]))
+    print("--------------------------------------------------------")
+    print()
 

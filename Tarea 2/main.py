@@ -72,7 +72,7 @@ def run(x_train, y_train, x_val, y_val, y_val_bin, subtask):
     plt.show()
     
 if __name__ == "__main__":
-    subtask = int(input("Introduzca sub-tarea (1-5): "))
+    subtask = int(input("Introduzca sub-tarea (1-6): "))
     
     tweets = None
     classifications = None
@@ -158,6 +158,9 @@ if __name__ == "__main__":
         run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
     elif subtask == 5:
         step_3.run()
+    elif subtask == 6:
+        for i in range(1, 5):
+            step_3.run(subtask=i)
     else:
         pass
 
