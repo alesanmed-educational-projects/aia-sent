@@ -44,40 +44,30 @@ def run(x_train, y_train, x_val, y_val, y_val_bin, subtask):
     print("Exactitud:{0}\nPrecision:{1}\nRecall:{2}\nF1:{3}".format(accuracy_score(y_val, predicted), 
                                                                       metrics[0], metrics[1], metrics[2]))
     
-    score = modelo.predict_proba(x_val)
+    score = modelo.predict_proba(x_val)[:, 0]
 
     print("AUC:{0}".format(roc_auc_score(y_val_bin, score)))
     
     precision = dict()
     recall = dict()
-    n_classes = y_val_bin.shape[1]
     average_precision = dict()
-    for i in range(n_classes):
-        precision[i], recall[i], _ = precision_recall_curve(y_val_bin[:, i],
-                                                            score[:, i])
-        average_precision[i] = average_precision_score(y_val_bin[:, i], score[:, i])
     
     # Compute micro-average ROC curve and ROC area
     precision["micro"], recall["micro"], _ = precision_recall_curve(
-                                                y_val_bin.ravel(), score.ravel())
+                                                y_val_bin, score)
     average_precision["micro"] = average_precision_score(y_val_bin, score,
                                                          average="micro")
     
     # Plot Precision-Recall curve for each class
     plt.clf()
     plt.plot(recall["micro"], precision["micro"],
-             label='micro-average Precision-recall curve (area = {0:0.2f})'
+             label='Precision-recall curve (area = {0:0.2f})'
                    ''.format(average_precision["micro"]))
-    for i in range(n_classes):
-        plt.plot(recall[i], precision[i],
-                 label='Precision-recall curve of class {0} (area = {1:0.2f})'
-                       ''.format(i, average_precision[i]))
-    
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
     plt.xlabel('Recall')
     plt.ylabel('Precision')
-    plt.title('Extension of Precision-Recall curve to multi-class')
+    plt.title('Precision-Recall curve')
     plt.legend(loc="lower right")
     plt.show()
     
@@ -118,12 +108,8 @@ if __name__ == "__main__":
         val_classif = classifications[frontier_index:]
         
         val_classif_bin = label_binarize(val_classif, ['positive', 'negative'])
-        val_classif_bin_2 = np.empty((val_classif_bin.shape[0], 2))
-    
-        val_classif_bin_2[np.where(val_classif_bin == [0])[0]] = [1, 0]
-        val_classif_bin_2[np.where(val_classif_bin == [1])[0]] = [0, 1]
-        
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin_2, subtask)
+
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
     elif subtask == 2:
         classifications[np.where(classifications == 'positive')[0]] = 's'
         classifications[np.where(classifications == 'negative')[0]] = 's'
@@ -139,12 +125,7 @@ if __name__ == "__main__":
         
         val_classif_bin = label_binarize(val_classif, ['s', 'ns'])
 
-        val_classif_bin_2 = np.empty((val_classif_bin.shape[0], 2))
-    
-        val_classif_bin_2[np.where(val_classif_bin == [0])[0]] = [1, 0]
-        val_classif_bin_2[np.where(val_classif_bin == [1])[0]] = [0, 1]
-    
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin_2, subtask)
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
     elif subtask == 3:
         classifications[np.where(classifications == 'negative')[0]] = 'np'
         classifications[np.where(classifications == 'neutral')[0]] = 'np'
@@ -158,13 +139,8 @@ if __name__ == "__main__":
         val_classif = classifications[frontier_index:]
         
         val_classif_bin = label_binarize(val_classif, ['positive', 'np'])
-
-        val_classif_bin_2 = np.empty((val_classif_bin.shape[0], 2))
     
-        val_classif_bin_2[np.where(val_classif_bin == [0])[0]] = [1, 0]
-        val_classif_bin_2[np.where(val_classif_bin == [1])[0]] = [0, 1]
-    
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin_2, subtask)
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
     elif subtask == 4:
         classifications[np.where(classifications == 'positive')[0]] = 'nn'
         classifications[np.where(classifications == 'neutral')[0]] = 'nn'
@@ -177,14 +153,9 @@ if __name__ == "__main__":
         val_tweets = tweets[frontier_index:]
         val_classif = classifications[frontier_index:]
         
-        val_classif_bin = label_binarize(val_classif, ['negative', 'nn'])
-
-        val_classif_bin_2 = np.empty((val_classif_bin.shape[0], 2))
-    
-        val_classif_bin_2[np.where(val_classif_bin == [0])[0]] = [1, 0]
-        val_classif_bin_2[np.where(val_classif_bin == [1])[0]] = [0, 1]
-    
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin_2, subtask)
+        val_classif_bin = label_binarize(val_classif, ['nn', 'negative'])
+        
+        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
     elif subtask == 5:
         step_3.run()
     else:
