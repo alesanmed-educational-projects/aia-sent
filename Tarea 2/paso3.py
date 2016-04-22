@@ -36,16 +36,29 @@ def run(subtask=-1):
     
     if subtask == 1:
         """
-        Best score: 0.854
+        Sin depuración:
+        Best score: 0.852
         Best parameters set:
-        	clf__alpha: 0.3
-        	tfidf__binary: False
-        	tfidf__ngram_range: (1, 2)
-        	tfidf__smooth_idf: False
-        	tfidf__stop_words: 'english'
-        	tfidf__sublinear_tf: True
-        	tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7f074907cc18>
-        	tfidf__use_idf: False
+          clf__alpha: 0.2
+          tfidf__binary: False
+          tfidf__ngram_range: (1, 3)
+          tfidf__smooth_idf: True
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: True
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7feec4eff080>
+          tfidf__use_idf: False
+        
+        Con depuración:
+        Best score: 0.859
+        Best parameters set:
+          clf__alpha: 0.5
+          tfidf__binary: False
+          tfidf__ngram_range: (1, 2)
+          tfidf__smooth_idf: True
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: True
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7f8297935128>
+          tfidf__use_idf: True
         """
 
         print("Positive vs Negatives")
@@ -55,16 +68,29 @@ def run(subtask=-1):
 
     elif subtask == 2:
         """
-        Best score: 0.793
+        Sin depuración:
+        Best score: 0.796
         Best parameters set:
-        	clf__alpha: 0.1
-        	tfidf__binary: True
-        	tfidf__ngram_range: (1, 2)
-        	tfidf__smooth_idf: False
-        	tfidf__stop_words: 'english'
-        	tfidf__sublinear_tf: True
-        	tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7f56cea63048>
-        	tfidf__use_idf: False
+          clf__alpha: 0.2
+          tfidf__binary: True
+          tfidf__ngram_range: (1, 3)
+          tfidf__smooth_idf: True
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: True
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7feec55877f0>
+          tfidf__use_idf: True
+        
+        Con depuración:
+        Best score: 0.795
+        Best parameters set:
+          clf__alpha: 0.1
+          tfidf__binary: False
+          tfidf__ngram_range: (1, 3)
+          tfidf__smooth_idf: True
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: False
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7f82a49fa9b0>
+          tfidf__use_idf: False
         """
         print("Sentiment vs No-sentiment")
         classifications[np.where(classifications == 'positive')[0]] = 's'
@@ -73,32 +99,58 @@ def run(subtask=-1):
         
     elif subtask == 3:
         """
-        Best score: 0.887
+        Sin depuración:
+        Best score: 0.893
         Best parameters set:
-        	clf__alpha: 0.05
-        	tfidf__binary: False
-        	tfidf__ngram_range: (1, 3)
-        	tfidf__smooth_idf: True
-        	tfidf__stop_words: 'english'
-        	tfidf__sublinear_tf: False
-        	tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7fb35a4c64e0>
-        	tfidf__use_idf: False
+          clf__alpha: 0.05
+          tfidf__binary: True
+          tfidf__ngram_range: (1, 2)
+          tfidf__smooth_idf: False
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: True
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7feec5fe0d68>
+          tfidf__use_idf: True
+          
+        Con depuración:
+        Best score: 0.893
+        Best parameters set:
+          clf__alpha: 0.05
+          tfidf__binary: False
+          tfidf__ngram_range: (1, 2)
+          tfidf__smooth_idf: False
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: False
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7f82a50be588>
+          tfidf__use_idf: False
         """
         print("Positive vs others")
         classifications[np.where(classifications == 'negative')[0]] = 'np'
         classifications[np.where(classifications == 'neutral')[0]] = 'np'
     elif subtask == 4:
         """
-        Best score: 0.893
+        Sin depuración:
+        Best score: 0.891
         Best parameters set:
-        	clf__alpha: 0.05
-        	tfidf__binary: False
-        	tfidf__ngram_range: (1, 3)
-        	tfidf__smooth_idf: False
-        	tfidf__stop_words: 'english'
-        	tfidf__sublinear_tf: True
-        	tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7fa77c6d8588>
-        	tfidf__use_idf: False
+          clf__alpha: 0.2
+          tfidf__binary: True
+          tfidf__ngram_range: (1, 2)
+          tfidf__smooth_idf: False
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: False
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7feec57cc898>
+          tfidf__use_idf: True
+          
+        Con depuración:
+        Best score: 0.901
+        Best parameters set:
+          clf__alpha: 0.05
+          tfidf__binary: True
+          tfidf__ngram_range: (1, 3)
+          tfidf__smooth_idf: False
+          tfidf__stop_words: 'english'
+          tfidf__sublinear_tf: False
+          tfidf__tokenizer: <english_stemmer.EnglishTokenizer object at 0x7f82a51a3630>
+          tfidf__use_idf: False
         """
         print("Negative vs others")
         classifications[np.where(classifications == 'positive')[0]] = 'nn'
