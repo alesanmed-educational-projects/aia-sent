@@ -46,7 +46,7 @@ def run(x_train, y_train, x_val, y_val, y_val_bin, subtask):
     
     score = modelo.predict_proba(x_val)[:, 0]
 
-    print("AUC:{0}".format(roc_auc_score(y_val_bin, score)))
+    print("AUC:{0}".format(average_precision_score(y_val_bin, score, average="micro")))
     
     precision = dict()
     recall = dict()
@@ -72,95 +72,95 @@ def run(x_train, y_train, x_val, y_val, y_val_bin, subtask):
     plt.show()
     
 if __name__ == "__main__":
-    subtask = int(input("Introduzca sub-tarea (1-6): "))
+    while True:
+        subtask = int(input("Introduzca sub-tarea (1-6): "))
+        
+        tweets = None
+        classifications = None
+        
+        with open('data/tweets.txt', 'r') as tweets_file:
+            tweets = np.array(tweets_file.read().splitlines() )
+            
+        with open('data/classification.txt', 'r') as classifications_file:
+            classifications = np.array(classifications_file.read().splitlines())
+        
+        index_shuf = list(range(len(tweets)))
+        shuffle(index_shuf)
     
-    tweets = None
-    classifications = None
+        tweets_shuf = [tweets[i] for i in index_shuf]
+        class_shuf = [classifications[i] for i in index_shuf]
+        
+        tweets = np.array(tweets_shuf)
+        classifications = np.array(class_shuf)
+        
+        test_size = 0.6
+        
+        if subtask == 1:
+            neutral_indices = np.where(classifications == 'neutral')[0]
+            tweets = np.delete(tweets, neutral_indices)
+            classifications = np.delete(classifications, neutral_indices)
+            
+            frontier_index = math.floor(tweets.size * test_size)
+            
+            train_tweets = tweets[:frontier_index]
+            train_classif = classifications[:frontier_index]
+            
+            val_tweets = tweets[frontier_index:]
+            val_classif = classifications[frontier_index:]
+            
+            val_classif_bin = label_binarize(val_classif, ['positive', 'negative'])
     
-    with open('data/tweets.txt', 'r') as tweets_file:
-        tweets = np.array(tweets_file.read().splitlines() )
-        
-    with open('data/classification.txt', 'r') as classifications_file:
-        classifications = np.array(classifications_file.read().splitlines())
+            run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
+        elif subtask == 2:
+            classifications[np.where(classifications == 'positive')[0]] = 's'
+            classifications[np.where(classifications == 'negative')[0]] = 's'
+            classifications[np.where(classifications == 'neutral')[0]] = 'ns'
+            
+            frontier_index = math.floor(tweets.size * test_size)        
+            
+            train_tweets = tweets[:frontier_index]
+            train_classif = classifications[:frontier_index]
+            
+            val_tweets = tweets[frontier_index:]
+            val_classif = classifications[frontier_index:]
+            
+            val_classif_bin = label_binarize(val_classif, ['s', 'ns'])
     
-    index_shuf = list(range(len(tweets)))
-    shuffle(index_shuf)
-
-    tweets_shuf = [tweets[i] for i in index_shuf]
-    class_shuf = [classifications[i] for i in index_shuf]
-    
-    tweets = np.array(tweets_shuf)
-    classifications = np.array(class_shuf)
-    
-    test_size = 0.6
-    
-    if subtask == 1:
-        neutral_indices = np.where(classifications == 'neutral')[0]
-        tweets = np.delete(tweets, neutral_indices)
-        classifications = np.delete(classifications, neutral_indices)
+            run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
+        elif subtask == 3:
+            classifications[np.where(classifications == 'negative')[0]] = 'np'
+            classifications[np.where(classifications == 'neutral')[0]] = 'np'
+            
+            frontier_index = math.floor(tweets.size * test_size)
+            
+            train_tweets = tweets[:frontier_index]
+            train_classif = classifications[:frontier_index]
+            
+            val_tweets = tweets[frontier_index:]
+            val_classif = classifications[frontier_index:]
+            
+            val_classif_bin = label_binarize(val_classif, ['positive', 'np'])
         
-        frontier_index = math.floor(tweets.size * test_size)
-        
-        train_tweets = tweets[:frontier_index]
-        train_classif = classifications[:frontier_index]
-        
-        val_tweets = tweets[frontier_index:]
-        val_classif = classifications[frontier_index:]
-        
-        val_classif_bin = label_binarize(val_classif, ['positive', 'negative'])
-
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
-    elif subtask == 2:
-        classifications[np.where(classifications == 'positive')[0]] = 's'
-        classifications[np.where(classifications == 'negative')[0]] = 's'
-        classifications[np.where(classifications == 'neutral')[0]] = 'ns'
-        
-        frontier_index = math.floor(tweets.size * test_size)        
-        
-        train_tweets = tweets[:frontier_index]
-        train_classif = classifications[:frontier_index]
-        
-        val_tweets = tweets[frontier_index:]
-        val_classif = classifications[frontier_index:]
-        
-        val_classif_bin = label_binarize(val_classif, ['s', 'ns'])
-
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
-    elif subtask == 3:
-        classifications[np.where(classifications == 'negative')[0]] = 'np'
-        classifications[np.where(classifications == 'neutral')[0]] = 'np'
-        
-        frontier_index = math.floor(tweets.size * test_size)
-        
-        train_tweets = tweets[:frontier_index]
-        train_classif = classifications[:frontier_index]
-        
-        val_tweets = tweets[frontier_index:]
-        val_classif = classifications[frontier_index:]
-        
-        val_classif_bin = label_binarize(val_classif, ['positive', 'np'])
-    
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
-    elif subtask == 4:
-        classifications[np.where(classifications == 'positive')[0]] = 'nn'
-        classifications[np.where(classifications == 'neutral')[0]] = 'nn'
-        
-        frontier_index = math.floor(tweets.size * test_size)
-        
-        train_tweets = tweets[:frontier_index]
-        train_classif = classifications[:frontier_index]
-        
-        val_tweets = tweets[frontier_index:]
-        val_classif = classifications[frontier_index:]
-        
-        val_classif_bin = label_binarize(val_classif, ['nn', 'negative'])
-        
-        run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
-    elif subtask == 5:
-        step_3.run()
-    elif subtask == 6:
-        for i in range(1, 5):
-            step_3.run(subtask=i)
-    else:
-        pass
-
+            run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
+        elif subtask == 4:
+            classifications[np.where(classifications == 'positive')[0]] = 'nn'
+            classifications[np.where(classifications == 'neutral')[0]] = 'nn'
+            
+            frontier_index = math.floor(tweets.size * test_size)
+            
+            train_tweets = tweets[:frontier_index]
+            train_classif = classifications[:frontier_index]
+            
+            val_tweets = tweets[frontier_index:]
+            val_classif = classifications[frontier_index:]
+            
+            val_classif_bin = label_binarize(val_classif, ['nn', 'negative'])
+            
+            run(train_tweets, train_classif, val_tweets, val_classif, val_classif_bin, subtask)
+        elif subtask == 5:
+            step_3.run()
+        elif subtask == 6:
+            for i in range(1, 5):
+                step_3.run(subtask=i)
+        else:
+            pass
